@@ -1,6 +1,22 @@
 # @medley/cookie
 
-Medley plugin for parsing and setting cookies.
+[![npm Version](https://img.shields.io/npm/v/@medley/cookie.svg)](https://www.npmjs.com/package/@medley/cookie)
+[![Build Status](https://travis-ci.org/medleyjs/cookie.svg?branch=master)](https://travis-ci.org/medleyjs/cookie)
+[![Coverage Status](https://coveralls.io/repos/github/medleyjs/cookie/badge.svg?branch=master)](https://coveralls.io/github/medleyjs/cookie?branch=master)
+[![dependencies Status](https://img.shields.io/david/medleyjs/cookie.svg)](https://david-dm.org/medleyjs/cookie)
+
+[Medley](https://www.npmjs.com/package/@medley/medley) plugin for parsing and setting cookies.
+
+
+## Installation
+
+```sh
+# npm
+npm install @medley/cookie --save
+
+# yarn
+yarn add @medley/cookie
+```
 
 
 ## Usage
@@ -16,10 +32,10 @@ app.registerPlugin(require('@medley/cookie'), {
 app.get('/', (req, res) => {
   if (req.cookies.foo === undefined) {
     res.setCookie('foo', 'bar');
-    res.send('set cookie');
+    res.send('cookie set');
   } else {
-    res.send('foo=' + req.cookies.foo);
-    // Sends: 'foo=bar'
+    res.send('foo = ' + req.cookies.foo);
+    // Sends: 'foo = bar'
   }
 });
 ```
@@ -58,8 +74,8 @@ Unsigns a cookie value.
 const fooCookie = req.unsignCookie(req.cookies.foo);
 console.log(fooCookie); // 'bar'
 
-const tamperedCookie = req.unsignCookie(req.cookies.tampered);
-console.log(tamperedCookie); // false
+const tamperedFooCookie = req.unsignCookie(req.cookies.foo + 'str');
+console.log(tamperedFooCookie); // false
 ```
 
 ### `res.signCookie(value)`
@@ -72,6 +88,7 @@ Signs a cookie value.
 ```js
 const signedValue = res.signCookie('hello');
 console.log(signedValue); // 'hello.DGDUkGlIkCzPz+C0B064FNgHdEjox7ch8tOBGslZ5QI'
+res.setCookie('greeting', signedValue);
 ```
 
 The signed value will be different depending on the `secret` option used when
