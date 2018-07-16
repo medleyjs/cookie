@@ -9,7 +9,7 @@ describe('req.cookies', () => {
   it('should be an object of parsed cookies', () => {
     const app = medley();
 
-    app.registerPlugin(cookie);
+    app.register(cookie);
 
     app.get('/', (req, res) => {
       assert.deepStrictEqual(req.cookies, {
@@ -38,7 +38,7 @@ describe('req.setCookie()', () => {
   it('should set a cookie to send to the client', () => {
     const app = medley();
 
-    app.registerPlugin(cookie);
+    app.register(cookie);
 
     app.get('/', (req, res) => {
       res.setCookie('foo', 'bar');
@@ -53,7 +53,7 @@ describe('req.setCookie()', () => {
   it('should set multiple cookies to send to the client', () => {
     const app = medley();
 
-    app.registerPlugin(cookie);
+    app.register(cookie);
 
     app.get('/', (req, res) => {
       res
@@ -78,7 +78,7 @@ describe('req.clearCookie()', () => {
   it('should clear a cookie', () => {
     const app = medley();
 
-    app.registerPlugin(cookie);
+    app.register(cookie);
 
     app.get('/', (req, res) => {
       res.clearCookie('foo', 'bar');
@@ -96,7 +96,7 @@ describe('req.clearCookie()', () => {
   it('should clear multiple cookies', () => {
     const app = medley();
 
-    app.registerPlugin(cookie);
+    app.register(cookie);
 
     app.get('/', (req, res) => {
       res
@@ -121,7 +121,7 @@ describe('res.sign() and req.unsign()', () => {
   it('should sign and unsign cookies', () => {
     const app = medley();
 
-    app.registerPlugin(cookie, {secret: 'tobiiscool'});
+    app.register(cookie, {secret: 'tobiiscool'});
 
     app.get('/', (req, res) => {
       const signed = res.signCookie('hello');
