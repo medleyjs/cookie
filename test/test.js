@@ -33,7 +33,7 @@ describe('req.cookies', () => {
 });
 
 
-describe('req.setCookie()', () => {
+describe('res.setCookie()', () => {
 
   it('should set a cookie to send to the client', () => {
     const app = medley();
@@ -73,7 +73,7 @@ describe('req.setCookie()', () => {
 });
 
 
-describe('req.clearCookie()', () => {
+describe('res.clearCookie()', () => {
 
   it('should clear a cookie', () => {
     const app = medley();
@@ -116,7 +116,7 @@ describe('req.clearCookie()', () => {
 });
 
 
-describe('res.sign() and req.unsign()', () => {
+describe('res.signCookie() and req.unsignCookie()', () => {
 
   it('should sign and unsign cookies', () => {
     const app = medley();
