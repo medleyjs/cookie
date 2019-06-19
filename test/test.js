@@ -6,7 +6,7 @@ const cookie = require('..');
 
 describe('req.cookies', () => {
 
-  it('should be an object of parsed cookies', () => {
+  it('should be an object of parsed cookies', async () => {
     const app = medley();
 
     app.register(cookie);
@@ -20,14 +20,13 @@ describe('req.cookies', () => {
       res.send('success');
     });
 
-    return app.inject({
+    const res = await app.inject({
       url: '/',
       headers: {
         Cookie: 'foo=bar; withSpace=a%20space',
       },
-    }).then((res) => {
-      assert.strictEqual(res.payload, 'success');
     });
+    assert.strictEqual(res.payload, 'success');
   });
 
 });
@@ -35,7 +34,7 @@ describe('req.cookies', () => {
 
 describe('res.setCookie()', () => {
 
-  it('should set a cookie to send to the client', () => {
+  it('should set a cookie to send to the client', async () => {
     const app = medley();
 
     app.register(cookie);
@@ -45,12 +44,11 @@ describe('res.setCookie()', () => {
       res.send();
     });
 
-    return app.inject('/').then((res) => {
-      assert.strictEqual(res.headers['set-cookie'], 'foo=bar; Path=/');
-    });
+    const res = await app.inject('/');
+    assert.strictEqual(res.headers['set-cookie'], 'foo=bar; Path=/');
   });
 
-  it('should set multiple cookies to send to the client', () => {
+  it('should set multiple cookies to send to the client', async () => {
     const app = medley();
 
     app.register(cookie);
@@ -62,12 +60,11 @@ describe('res.setCookie()', () => {
         .send();
     });
 
-    return app.inject('/').then((res) => {
-      assert.deepStrictEqual(res.headers['set-cookie'], [
-        'a=1; Path=/',
-        'b=2; Max-Age=3600; Path=/; HttpOnly; Secure',
-      ]);
-    });
+    const res = await app.inject('/');
+    assert.deepStrictEqual(res.headers['set-cookie'], [
+      'a=1; Path=/',
+      'b=2; Max-Age=3600; Path=/; HttpOnly; Secure',
+    ]);
   });
 
 });
@@ -75,7 +72,7 @@ describe('res.setCookie()', () => {
 
 describe('res.clearCookie()', () => {
 
-  it('should clear a cookie', () => {
+  it('should clear a cookie', async () => {
     const app = medley();
 
     app.register(cookie);
@@ -85,15 +82,14 @@ describe('res.clearCookie()', () => {
       res.send();
     });
 
-    return app.inject('/').then((res) => {
-      assert.strictEqual(
-        res.headers['set-cookie'],
-        'foo=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
-      );
-    });
+    const res = await app.inject('/');
+    assert.strictEqual(
+      res.headers['set-cookie'],
+      'foo=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    );
   });
 
-  it('should clear multiple cookies', () => {
+  it('should clear multiple cookies', async () => {
     const app = medley();
 
     app.register(cookie);
@@ -105,12 +101,11 @@ describe('res.clearCookie()', () => {
         .send();
     });
 
-    return app.inject('/').then((res) => {
-      assert.deepStrictEqual(res.headers['set-cookie'], [
-        'a=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
-        'b=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure',
-      ]);
-    });
+    const res = await app.inject('/');
+    assert.deepStrictEqual(res.headers['set-cookie'], [
+      'a=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+      'b=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure',
+    ]);
   });
 
 });
@@ -118,7 +113,7 @@ describe('res.clearCookie()', () => {
 
 describe('res.signCookie() and req.unsignCookie()', () => {
 
-  it('should sign and unsign cookies', () => {
+  it('should sign and unsign cookies', async () => {
     const app = medley();
 
     app.register(cookie, {secret: 'tobiiscool'});
@@ -133,9 +128,8 @@ describe('res.signCookie() and req.unsignCookie()', () => {
       res.send('success');
     });
 
-    return app.inject('/').then((res) => {
-      assert.strictEqual(res.payload, 'success');
-    });
+    const res = await app.inject('/');
+    assert.strictEqual(res.payload, 'success');
   });
 
 });
