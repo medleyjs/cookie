@@ -79,7 +79,7 @@ describe('res.clearCookie()', () => {
     const app = makeApp();
 
     app.get('/', (req, res) => {
-      res.clearCookie('foo', 'bar');
+      res.clearCookie('foo');
       res.send();
     });
 
@@ -90,18 +90,33 @@ describe('res.clearCookie()', () => {
     );
   });
 
+  it('should clear a cookie with options', async () => {
+    const app = makeApp();
+
+    app.get('/', (req, res) => {
+      res.clearCookie('foo', {maxAge: 3600, httpOnly: true, secure: true});
+      res.send();
+    });
+
+    const res = await app.request('/');
+    assert.deepStrictEqual(
+      res.headers['set-cookie'],
+      ['foo=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure']
+    );
+  });
+
   it('should clear multiple cookies', async () => {
     const app = makeApp();
 
     app.get('/', (req, res) => {
-      res.clearCookie('a', {expires: new Date()});
-      res.clearCookie('b', {maxAge: 3600, httpOnly: true, secure: true});
+      res.clearCookie('a', {path: '/some/path'});
+      res.clearCookie('b', {httpOnly: true, secure: true});
       res.send();
     });
 
     const res = await app.request('/');
     assert.deepStrictEqual(res.headers['set-cookie'], [
-      'a=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+      'a=; Path=/some/path; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
       'b=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure',
     ]);
   });

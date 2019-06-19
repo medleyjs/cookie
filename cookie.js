@@ -1,9 +1,7 @@
 'use strict';
 
-const {parse: parseCookie, serialize: serializeCookie} = require('cookie');
+const {parse, serialize} = require('cookie');
 const {sign, unsign} = require('cookie-signature');
-
-const clearCookieExpiresDate = new Date(1);
 
 function cookie(app, {secret} = {}) {
   app.decorateRequest('cookies', null);
@@ -24,24 +22,33 @@ function cookie(app, {secret} = {}) {
 
 function onRequest(req, res, next) {
   const cookieHeader = req.headers.cookie;
-  req.cookies = cookieHeader === undefined ? {} : parseCookie(cookieHeader);
+
+  req.cookies = cookieHeader === undefined ? {} : parse(cookieHeader);
+
   next();
 }
 
 function setCookie(name, value, options) {
-  options = Object.assign({path: '/'}, options);
-  this.append('set-cookie', serializeCookie(name, value, options));
+  const opts = Object.assign({path: '/'}, options);
+
+  this.append('set-cookie', serialize(name, value, opts));
 
   return this;
 }
 
+const clearCookieExpiresDate = new Date(1);
+
 function clearCookie(name, options) {
   // IE/Edge don't support Max-Age=0, so use Expires instead
-  options = Object.assign({expires: null, maxAge: null}, options);
-  options.expires = clearCookieExpiresDate;
-  options.maxAge = null; // In case options contains maxAge
+  const clearOpts = Object.assign({
+    expires: clearCookieExpiresDate,
+    maxAge: null,
+    path: '/',
+  }, options);
 
-  this.setCookie(name, '', options);
+  clearOpts.maxAge = null; // In case options contains maxAge
+
+  this.append('set-cookie', serialize(name, '', clearOpts));
 
   return this;
 }
