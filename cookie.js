@@ -3,13 +3,18 @@
 const {parse, serialize} = require('cookie');
 const {sign, unsign} = require('cookie-signature');
 
-function cookie(app, {secret} = {}) {
+function cookie(app, {decode, secret} = {}) {
   app.decorateRequest('cookies', null);
 
-  app.addHook('onRequest', onRequest);
+  const parseOpts = {decode};
 
-  app.decorateResponse('setCookie', setCookie);
-  app.decorateResponse('clearCookie', clearCookie);
+  app.addHook('onRequest', function onRequest(req, res, next) {
+    const cookieHeader = req.headers.cookie;
+
+    req.cookies = cookieHeader === undefined ? {} : parse(cookieHeader, parseOpts);
+
+    next();
+  });
 
   app.decorateRequest('unsignCookie', function unsignCookie(value) {
     return unsign(value, secret);
@@ -18,14 +23,9 @@ function cookie(app, {secret} = {}) {
   app.decorateResponse('signCookie', function signCookie(value) {
     return sign(value, secret);
   });
-}
 
-function onRequest(req, res, next) {
-  const cookieHeader = req.headers.cookie;
-
-  req.cookies = cookieHeader === undefined ? {} : parse(cookieHeader);
-
-  next();
+  app.decorateResponse('setCookie', setCookie);
+  app.decorateResponse('clearCookie', clearCookie);
 }
 
 function setCookie(name, value, options) {

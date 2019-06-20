@@ -11,10 +11,8 @@
 ## Installation
 
 ```sh
-# npm
 npm install @medley/cookie --save
-
-# yarn
+# or
 yarn add @medley/cookie
 ```
 
@@ -25,22 +23,55 @@ yarn add @medley/cookie
 const medley = require('@medley/medley');
 const app = medley();
 
-app.register(require('@medley/cookie'), {
-  secret: 'to everybody', // `secret` should be a long, random string
-});
+app.register(require('@medley/cookie'));
 
 app.get('/', (req, res) => {
   if (req.cookies.foo === undefined) {
     res.setCookie('foo', 'bar');
     res.send('cookie set');
   } else {
-    res.send('foo = ' + req.cookies.foo);
-    // Sends: 'foo = bar'
+    res.send(`cookie: foo = ${req.cookies.foo}`);
   }
 });
 ```
 
-The cookie plugin takes one option called `secret` which is used for signing/unsigning cookies.
+### Plugin Options
+
+#### `secret`
+
+Type: `string`
+
+Used for signing/unsigning cookies.
+
+```js
+app.register(require('@medley/cookie'), {
+  secret: 'to everybody', // `secret` should be a long, random string
+});
+
+app.get('/', (req, res) => {
+  if (req.cookies.foo === undefined) {
+    const fooCookie = res.signCookie('foo-value')
+    res.setCookie('foo', foo);
+    res.send('cookie set');
+  } else {
+    const fooCookie = req.unsignCookie(req.cookies.foo);
+    res.send(`foo = ${fooCookie}`);
+  }
+});
+```
+
+#### `decode`
+
+Type: `function`<br>
+Default: [`decodeURIComponent`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent)
+
+A function that will be used to decode each cookies' value.
+
+```js
+app.register(require('@medley/cookie'), {
+  decode: require('safe-decode-uri-component'),
+});
+```
 
 
 ## API
@@ -57,11 +88,10 @@ The cookie plugin takes one option called `secret` which is used for signing/uns
 An object of parsed cookies.
 
 ```js
-req.cookies // { cookieName: 'cookieValue', foo: 'bar' }
+app.get('/', (req, res) => {
+  req.cookies // { cookieName: 'cookieValue', foo: 'bar' }
+});
 ```
-
-Note that cookies are parsed in an `onRequest` hook, so `req.cookies` will not
-be available in any `onRequest` hooks added before registering this plugin.
 
 ### `req.unsignCookie(value)`
 
@@ -88,16 +118,17 @@ Signs a cookie value.
 ```js
 const signedValue = res.signCookie('hello');
 console.log(signedValue); // 'hello.DGDUkGlIkCzPz+C0B064FNgHdEjox7ch8tOBGslZ5QI'
+
 res.setCookie('greeting', signedValue);
 ```
 
-The signed value will be different depending on the `secret` option used when
+The signed value will be different depending on the [`secret`](#secret) option used when
 registering the plugin.
 
 ### `res.setCookie(name, value[, options])`
 
 + `name` *(string)* - The name of the cookie.
-+ `value` *(string)* - A cookie value.
++ `value` *(string)* - The cookie value.
 + `options` *(object)* - See the [options](#options) below.
 + chainable
 
@@ -128,13 +159,13 @@ res.setCookie('cross_domain_cookie', 'value!', {
 | Property | Type | Description |
 |----------|------|-------------|
 | `domain` | *string* | Domain name for the cookie.
-| `encode` | *function* | A synchronous function used for encoding the cookie value. Default: [`encodeURIComponent`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent).
+| `encode` | *function* | A synchronous function used for encoding the cookie value.<br>Default: [`encodeURIComponent`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
 | `expires` | *Date* | Expiry date of the cookie in GMT. If not specified (and `maxAge` is not specified), a session cookie is created.
-| `httpOnly` | *boolean* | Flags the cookie to be accessible only by the web server (and not by JavaScript in the browser). Default: `false`.
+| `httpOnly` | *boolean* | Flags the cookie to be accessible only by the web server (and not by JavaScript in the browser).<br>Default: `false`
 | `maxAge` | *number* | Convenient option for setting the expiry time relative to the current time in **seconds**. If not specified (and `expires` is not specified), a session cookie is created.
-| `path` | *string* | URL path prefix at which the cookie will be available. Default: `'/'`.
-| `sameSite` | *string* | Value of the [*SameSite*](https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-4.1.1) `Set-Cookie` attribute (either `'strict'` or `'lax'`).
-| `secure` | *boolean* | Flags the cookie to be used with HTTPS only. Default: `false`.
+| `path` | *string* | URL path prefix at which the cookie will be available.<br>Default: `'/'`
+| `sameSite` | *string*\|*boolean* | Value for the [`SameSite`](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-5.3.7) `Set-Cookie` attribute. Can be any of the values supported by the [`cookie` module](https://github.com/jshttp/cookie#samesite): `true`, `false`, `'strict'`, `'lax'`, `'none'`.
+| `secure` | *boolean* | Flags the cookie to be used with HTTPS only.<br>Default: `false`
 
 ### `res.clearCookie(name[, options])`
 

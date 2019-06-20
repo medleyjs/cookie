@@ -37,6 +37,29 @@ describe('req.cookies', () => {
     assert.strictEqual(res.body, 'success');
   });
 
+  it('should support parsed cookies using the decode option', async () => {
+    const app = makeApp({
+      decode: str => str.replace(/-/g, '_'),
+    });
+
+    app.get('/', (req, res) => {
+      assert.deepStrictEqual(req.cookies, {
+        foo: 'bar_buzz',
+        zab: '_a%20buzz_buzz',
+      });
+
+      res.send('success');
+    });
+
+    const res = await app.request({
+      url: '/',
+      headers: {
+        Cookie: 'foo=bar-buzz; zab=-a%20buzz-buzz',
+      },
+    });
+    assert.strictEqual(res.body, 'success');
+  });
+
 });
 
 
