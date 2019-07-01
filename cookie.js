@@ -10,7 +10,6 @@ function cookie(app, {decode, secret} = {}) {
 
   app.addHook('onRequest', function onRequest(req, res, next) {
     const cookieHeader = req.headers.cookie;
-
     req.cookies = cookieHeader === undefined ? {} : parse(cookieHeader, parseOpts);
 
     next();
@@ -31,7 +30,7 @@ function cookie(app, {decode, secret} = {}) {
 function setCookie(name, value, options) {
   const opts = Object.assign({path: '/'}, options);
 
-  this.append('set-cookie', serialize(name, value, opts));
+  this.appendHeader('set-cookie', serialize(name, value, opts));
 
   return this;
 }
@@ -48,13 +47,9 @@ function clearCookie(name, options) {
 
   clearOpts.maxAge = null; // In case options contains maxAge
 
-  this.append('set-cookie', serialize(name, '', clearOpts));
+  this.appendHeader('set-cookie', serialize(name, '', clearOpts));
 
   return this;
 }
-
-cookie.meta = {
-  name: '@medley/cookie',
-};
 
 module.exports = cookie;
