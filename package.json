@@ -2,6 +2,8 @@
   "name": "@medley/cookie",
   "version": "0.2.1",
   "description": "Medley plugin for parsing and setting cookies",
+  "license": "MIT",
+  "author": "Nathan Woltman <nwoltman@outlook.com>",
   "main": "cookie.js",
   "files": [
     "cookie.js"
@@ -9,16 +11,9 @@
   "engines": {
     "node": ">=6"
   },
-  "license": "MIT",
-  "author": "Nathan Woltman <nwoltman@outlook.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/medleyjs/cookie.git"
-  },
+  "repository": "github:medleyjs/cookie",
   "homepage": "https://github.com/medleyjs/cookie#readme",
-  "bugs": {
-    "url": "https://github.com/medleyjs/cookie/issues"
-  },
+  "bugs": "https://github.com/medleyjs/cookie/issues",
   "keywords": [
     "cookie",
     "parsing",
@@ -28,10 +23,7 @@
     "medley"
   ],
   "nyc": {
-    "reporter": [
-      "html",
-      "text-summary"
-    ],
+    "reporter": ["html", "text-summary"],
     "check-coverage": true,
     "branches": 100,
     "lines": 100,
