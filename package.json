@@ -47,9 +47,10 @@
   "devDependencies": {
     "@medley/medley": "~0.13.0",
     "@medley/self-request": "~0.4.0",
-    "coveralls": "^3.0.4",
-    "eslint": "^5.16.0",
-    "mocha": "^6.1.4",
+    "@nwoltman/eslint-config": "^0.5.1",
+    "coveralls": "^3.0.7",
+    "eslint": "^6.6.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1"
   },
   "scripts": {
