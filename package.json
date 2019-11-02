@@ -27,13 +27,26 @@
     "unsign",
     "medley"
   ],
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "check-coverage": true,
+    "branches": 100,
+    "lines": 100,
+    "statements": 100
+  },
+  "peerDependencies": {
+    "@medley/medley": ">=0.13.0"
+  },
   "dependencies": {
     "cookie": "^0.4.0",
     "cookie-signature": "^1.1.0"
   },
   "devDependencies": {
-    "@medley/medley": "~0.12.0",
-    "@medley/self-request": "~0.3.0",
+    "@medley/medley": "~0.13.0",
+    "@medley/self-request": "~0.4.0",
     "coveralls": "^3.0.4",
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
@@ -41,8 +54,8 @@
   },
   "scripts": {
     "lint": "eslint *.js test/*.js",
-    "test-only": "nyc --reporter=html --reporter=text-summary mocha",
-    "test": "npm run lint && npm run test-only",
+    "test-only": "nyc mocha",
+    "test": "eslint *.js test/*.js && nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   }
 }

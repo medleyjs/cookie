@@ -4,7 +4,7 @@ const {parse, serialize} = require('cookie');
 const {sign, unsign} = require('cookie-signature');
 
 function cookie(app, {decode, secret} = {}) {
-  app.decorateRequest('cookies', null);
+  app.extendRequest('cookies', null);
 
   const parseOpts = {decode};
 
@@ -15,16 +15,16 @@ function cookie(app, {decode, secret} = {}) {
     next();
   });
 
-  app.decorateRequest('unsignCookie', function unsignCookie(value) {
+  app.extendRequest('unsignCookie', function unsignCookie(value) {
     return unsign(value, secret);
   });
 
-  app.decorateResponse('signCookie', function signCookie(value) {
+  app.extendResponse('signCookie', function signCookie(value) {
     return sign(value, secret);
   });
 
-  app.decorateResponse('setCookie', setCookie);
-  app.decorateResponse('clearCookie', clearCookie);
+  app.extendResponse('setCookie', setCookie);
+  app.extendResponse('clearCookie', clearCookie);
 }
 
 function setCookie(name, value, options) {
