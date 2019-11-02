@@ -1,6 +1,6 @@
 {
   "name": "@medley/cookie",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Medley plugin for parsing and setting cookies",
   "license": "MIT",
   "author": "Nathan Woltman <nwoltman@outlook.com>",
@@ -23,7 +23,10 @@
     "medley"
   ],
   "nyc": {
-    "reporter": ["html", "text-summary"],
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
     "check-coverage": true,
     "branches": 100,
     "lines": 100,
