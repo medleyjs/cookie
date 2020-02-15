@@ -11,7 +11,7 @@
 ## Installation
 
 ```sh
-npm install @medley/cookie --save
+npm install @medley/cookie
 # or
 yarn add @medley/cookie
 ```
